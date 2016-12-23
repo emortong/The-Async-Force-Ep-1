@@ -57,23 +57,58 @@ spec14Req.send();
 
 
 // film list
-var newFilm = document.createElement("li")
-
 var filmReq = new XMLHttpRequest();
 filmReq.addEventListener("load", filmReqEventListener);
 filmReq.open("GET", "http://swapi.co/api/films/");
 filmReq.send();
 
+
 function filmReqEventListener () {
   var films = JSON.parse(this.responseText);
   var results = films.results;
-  console.log(results)
   var ul = document.getElementById('filmList')
   for(var i = 0; i<results.length; i ++) {
     console.log(results[i].title);
-    var newFilm = document.createElement("li");
-    ul.appendChild(newFilm)
+    var filmLi = document.createElement('li');
+    ul.appendChild(filmLi);
+    var newFilm = document.createElement("h2");
+    filmLi.appendChild(newFilm)
     newFilm.innerHTML = results[i].title;
+    var planetsH3 = document.createElement('h3');
+    planetsH3.innerHTML = "Planets";
+    filmLi.appendChild(planetsH3);
+    var filmPlanets = document.createElement('ul');
+    filmLi.appendChild(filmPlanets);
+    var newPlanet = document.createElement('li');
+    // filmPlanets.appendChild(newPlanet);
+
+    for(var x = 0; x < results[i].planets.length; x++) {
+    var planetAPI = results[i].planets[x];
+    console.log(planetAPI)
+    var planetReq = new XMLHttpRequest();
+    planetReq.addEventListener('load', planetReqEventListener(filmPlanets));
+    planetReq.open('GET', planetAPI);
+    planetReq.send();
+
+    }
+
+
   }
 }
 
+
+    function planetReqEventListener(filmPlanets) {
+
+
+      return function() {
+        console.log(this.responseText)
+        var planet = JSON.parse(this.responseText);
+        var planetName = planet.name;
+        var newPlanet = document.createElement('li');
+        filmPlanets.appendChild(newPlanet);
+        var planetNameH4 = document.createElement('h4');
+        newPlanet.appendChild(planetNameH4);
+        planetNameH4.innerHTML = planetName;
+      }
+
+    }
